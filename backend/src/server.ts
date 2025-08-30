@@ -16,10 +16,31 @@ import "./strategies/google";
 
 const app = express();
 
+// CORS configuration for production
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173", // Development
+  "http://localhost:3000", // Development
+];
+
+// Remove undefined values
+const origins = allowedOrigins.filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (origins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 app.use(express.json());
@@ -31,8 +52,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
@@ -60,6 +81,7 @@ async function startServer() {
     app.listen(port, () => {
       console.log(`✅ Backend listening on http://localhost:${port}`);
       console.log(`🔗 MongoDB connection established`);
+      console.log(`🌐 CORS origins: ${origins.join(", ")}`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
