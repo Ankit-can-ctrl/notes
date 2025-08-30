@@ -5,7 +5,9 @@ import { store } from "../data/store";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 const BACKEND_URL =
-  process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+  process.env.NODE_ENV === "production"
+    ? "https://notes-75f6.onrender.com"
+    : `http://localhost:${process.env.PORT || 3000}`;
 
 if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
   passport.use(
