@@ -4,7 +4,7 @@ export interface ApiError {
 }
 
 const BASE_URL =
-  (import.meta as any).env?.VITE_API_URL || "http://localhost:3000";
+  (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:3000";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
