@@ -21,6 +21,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173", // Development
   "http://localhost:3000", // Development
+  "https://notes1-topaz.vercel.app",
 ];
 
 // Remove undefined values
